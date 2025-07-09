@@ -1,70 +1,80 @@
-using System;
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-    InputActionMain input; 
-    [SerializeField] float runSpeed=2, walkSpeed=1, dashSpeed = 5;
-    [SerializeField] bool isCrouching;
+    InputActionMain control;
+    PhotonView pv;
+    private Camera mainCamera;
+
+    public GameObject bullet;
+    float time;
     private void Awake()
     {
-        input = new();
-        input.Enable();
-        input.MainActionMap.OnMouseMove.performed += OnMouseMove;
-        input.MainActionMap.Slide.performed += CrouchToggle;
+        pv = GetComponent<PhotonView>();
+        control = new InputActionMain();
+        control.Enable();
+        mainCamera = Camera.main; // Cache the main camera
+        control.MainActionMap.Shoot.performed += Shoot;
     }
 
-    private void CrouchToggle(InputAction.CallbackContext context)
+    private void Shoot(InputAction.CallbackContext context)
     {
-        isCrouching = !isCrouching;
-        HandleCrouch();
+        if (time < .5f) return;
+        var b = Instantiate(bullet, transform.position+transform.forward + Vector3.up * .5f, Quaternion.identity);
+        b.transform.LookAt(transform.position-transform.forward*2);
+        time = 0;
+
     }
 
-    private void OnMouseMove(InputAction.CallbackContext context)
+    private void Update()
     {
-        Vector2 drag = context.ReadValue<Vector2>();
-        Debug.LogError(drag);
-        transform.eulerAngles += new Vector3(-drag.y, drag.x);
-        transform.eulerAngles = new Vector3(transform.eulerAngles.x,transform.eulerAngles.y,0);
+        if (!pv.IsMine) return;
+
+        time += Time.deltaTime;
+        // Handle movement
+        var movement = control.MainActionMap.Movement.ReadValue<Vector2>();
+        transform.position += new Vector3(movement.x, 0, movement.y) * Time.deltaTime;
+        mainCamera.transform.position = transform.position + Vector3.up * 15;
+
+        // Handle rotation based on mouse position
+        var mousePosition = control.MainActionMap.MousePosition.ReadValue<Vector2>();
+        RotateTowardsMouse(mousePosition);
     }
 
-    void Update()
+    private void RotateTowardsMouse(Vector2 mousePosition)
     {
-        HandleMovement();
-        //HandleLookAt();
-    }
-    void HandleLookAt()
-    {
-        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out var hitInfo))
+        // Convert mouse position from screen to world space
+        Ray ray = mainCamera.ScreenPointToRay(mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
         {
-            transform.LookAt(hitInfo.point);
-            transform.eulerAngles = new Vector3(0,transform.eulerAngles.y,0);
+            // Get the point on the ground plane (or any surface) where the mouse is pointing
+            Vector3 targetPosition = hit.point;
+            targetPosition.y = transform.position.y; // Keep player's y position to avoid tilting
+
+            // Calculate direction from player to mouse point
+            Vector3 direction = (targetPosition - transform.position).normalized;
+
+            // Rotate player to face the mouse point
+            if (direction != Vector3.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.Euler(0, targetRotation.eulerAngles.y, 0); // Lock rotation to Y-axis
+            }
         }
     }
-    void HandleMovement()
+    private void OnCollisionEnter(Collision collision)
     {
-        Vector3 dir = Vector3.zero;
-        if (Input.GetKey(KeyCode.W))
-            dir += Vector3.forward;
-        if (Input.GetKey(KeyCode.S))
-            dir += Vector3.back;
-        if (Input.GetKey(KeyCode.D))
-            dir += Vector3.right;
-        if (Input.GetKey(KeyCode.A))
-            dir += Vector3.left;
-        if (dir != Vector3.zero)
-            if (Input.GetKey(KeyCode.LeftShift))
-                transform.Translate(dir * Time.deltaTime * walkSpeed);
-            else
-                transform.Translate(dir * Time.deltaTime * runSpeed);
-        HandleCrouch();
+        if (collision.collider.CompareTag("Bullet"))
+        {
+            PhotonNetwork.Disconnect();
+            SceneManager.LoadScene(0);
+        }
     }
-
-    private void HandleCrouch()
+    private void OnDestroy()
     {
-        transform.position = new Vector3(transform.position.x, isCrouching ? 1 : 2, transform.position.z);
+        control.Disable(); // Clean up input system
     }
-
 }

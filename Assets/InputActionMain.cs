@@ -71,6 +71,24 @@ public partial class @InputActionMain: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MousePosition"",
+                    ""type"": ""Value"",
+                    ""id"": ""5cb3e446-cb31-4d16-b7e1-d61ed65c4b20"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Movement"",
+                    ""type"": ""Value"",
+                    ""id"": ""69e4696c-605a-432c-a66f-7d15c9248750"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -99,7 +117,7 @@ public partial class @InputActionMain: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""c9f08c8c-f787-400a-b888-bb4b560ef5b3"",
-                    ""path"": """",
+                    ""path"": ""<Keyboard>/r"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -110,7 +128,7 @@ public partial class @InputActionMain: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""741ef583-d237-440c-ad87-520c7dba05e6"",
-                    ""path"": """",
+                    ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -121,13 +139,79 @@ public partial class @InputActionMain: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""b292f16d-868c-47a0-a8f7-b918ff5b5ff6"",
-                    ""path"": """",
+                    ""path"": ""<Mouse>/rightButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Ads"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3c4f5334-6d17-4fbb-8dcc-5b7cb8030048"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MousePosition"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""59bd7137-4c40-45c0-ae60-15039fce2349"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""8c310030-6a76-4d18-b4de-d0bb208bc19d"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""e2765012-5763-4878-96ff-53a3703a1d38"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""3280798f-7dd1-4efe-abf0-eecc025f8202"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""1aca12f9-3930-438a-b708-14040b5671c4"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -141,6 +225,8 @@ public partial class @InputActionMain: IInputActionCollection2, IDisposable
         m_MainActionMap_Reload = m_MainActionMap.FindAction("Reload", throwIfNotFound: true);
         m_MainActionMap_Shoot = m_MainActionMap.FindAction("Shoot", throwIfNotFound: true);
         m_MainActionMap_Ads = m_MainActionMap.FindAction("Ads", throwIfNotFound: true);
+        m_MainActionMap_MousePosition = m_MainActionMap.FindAction("MousePosition", throwIfNotFound: true);
+        m_MainActionMap_Movement = m_MainActionMap.FindAction("Movement", throwIfNotFound: true);
     }
 
     ~@InputActionMain()
@@ -212,6 +298,8 @@ public partial class @InputActionMain: IInputActionCollection2, IDisposable
     private readonly InputAction m_MainActionMap_Reload;
     private readonly InputAction m_MainActionMap_Shoot;
     private readonly InputAction m_MainActionMap_Ads;
+    private readonly InputAction m_MainActionMap_MousePosition;
+    private readonly InputAction m_MainActionMap_Movement;
     public struct MainActionMapActions
     {
         private @InputActionMain m_Wrapper;
@@ -221,6 +309,8 @@ public partial class @InputActionMain: IInputActionCollection2, IDisposable
         public InputAction @Reload => m_Wrapper.m_MainActionMap_Reload;
         public InputAction @Shoot => m_Wrapper.m_MainActionMap_Shoot;
         public InputAction @Ads => m_Wrapper.m_MainActionMap_Ads;
+        public InputAction @MousePosition => m_Wrapper.m_MainActionMap_MousePosition;
+        public InputAction @Movement => m_Wrapper.m_MainActionMap_Movement;
         public InputActionMap Get() { return m_Wrapper.m_MainActionMap; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -245,6 +335,12 @@ public partial class @InputActionMain: IInputActionCollection2, IDisposable
             @Ads.started += instance.OnAds;
             @Ads.performed += instance.OnAds;
             @Ads.canceled += instance.OnAds;
+            @MousePosition.started += instance.OnMousePosition;
+            @MousePosition.performed += instance.OnMousePosition;
+            @MousePosition.canceled += instance.OnMousePosition;
+            @Movement.started += instance.OnMovement;
+            @Movement.performed += instance.OnMovement;
+            @Movement.canceled += instance.OnMovement;
         }
 
         private void UnregisterCallbacks(IMainActionMapActions instance)
@@ -264,6 +360,12 @@ public partial class @InputActionMain: IInputActionCollection2, IDisposable
             @Ads.started -= instance.OnAds;
             @Ads.performed -= instance.OnAds;
             @Ads.canceled -= instance.OnAds;
+            @MousePosition.started -= instance.OnMousePosition;
+            @MousePosition.performed -= instance.OnMousePosition;
+            @MousePosition.canceled -= instance.OnMousePosition;
+            @Movement.started -= instance.OnMovement;
+            @Movement.performed -= instance.OnMovement;
+            @Movement.canceled -= instance.OnMovement;
         }
 
         public void RemoveCallbacks(IMainActionMapActions instance)
@@ -288,5 +390,7 @@ public partial class @InputActionMain: IInputActionCollection2, IDisposable
         void OnReload(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
         void OnAds(InputAction.CallbackContext context);
+        void OnMousePosition(InputAction.CallbackContext context);
+        void OnMovement(InputAction.CallbackContext context);
     }
 }
