@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         pv = GetComponent<PhotonView>();
+        if (!pv.IsMine) return;
         control = new InputActionMain();
         control.Enable();
         mainCamera = Camera.main; // Cache the main camera
@@ -23,8 +24,7 @@ public class PlayerController : MonoBehaviour
     private void Shoot(InputAction.CallbackContext context)
     {
         if (time < .5f) return;
-        var b = Instantiate(bullet, transform.position+transform.forward + Vector3.up * .5f, Quaternion.identity);
-        b.transform.LookAt(transform.position-transform.forward*2);
+        var b = PhotonNetwork.Instantiate("Bullet", transform.position + transform.forward + Vector3.up * .5f, transform.rotation);
         time = 0;
 
     }
@@ -65,16 +65,23 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if (collision.collider.CompareTag("Bullet"))
+        if (!pv.IsMine) return;
+        if (other.CompareTag("Bullet") )
         {
+            var pv = other.GetComponent<PhotonView>();
+            if (pv.IsMine) return;
+            PhotonNetwork.Destroy(pv);
+            PhotonNetwork.DestroyAll(true);
+
             PhotonNetwork.Disconnect();
             SceneManager.LoadScene(0);
         }
+        
     }
     private void OnDestroy()
     {
-        control.Disable(); // Clean up input system
+        control?.Disable(); // Clean up input system
     }
 }

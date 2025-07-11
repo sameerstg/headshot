@@ -5,22 +5,30 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
      PhotonView view;
+    private void Awake()
+    {
+        view = GetComponent<PhotonView>();
+    }
     IEnumerator Start()
     {
-        yield return new WaitForSeconds(10);
-        Destroy(gameObject);
+        yield return new WaitForSeconds(5);
+        if(PhotonNetwork.InRoom)
+            if (view.IsMine)
+                PhotonNetwork.Destroy(gameObject);
     }
     void Update()
     {
-        transform.Translate(transform.forward * Time.deltaTime*3);
-    }
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.collider.CompareTag("Player"))
+        //transform.Translate(transform.forward* Time.deltaTime*3);
+        if (view.IsMine)
         {
-            //collision.collider.GetComponent<PlayerModel>();
+            transform.position += transform.forward * Time.deltaTime*5;
         }
-        Destroy(this.gameObject);
     }
+    //private void OnCollisionEnter(Collision collision)
+    //{
+    //    if (PhotonNetwork.InRoom)
+    //        if (view.IsMine)
+    //    PhotonNetwork.Destroy(gameObject);
+    //}
 
 }
