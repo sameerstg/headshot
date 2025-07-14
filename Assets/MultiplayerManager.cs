@@ -55,4 +55,4 @@ public class MultiplayerManager : MonoBehaviourPunCallbacks
         PhotonNetwork.Instantiate("Player", Vector3.up*2+Vector3.right*PhotonNetwork.PlayerList.Length+Vector3.forward* PhotonNetwork.PlayerList.Length, Quaternion.identity);
         
     }
-   }
+}

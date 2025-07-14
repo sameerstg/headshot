@@ -1,38 +1,33 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Gun : MonoBehaviour
 {
-    public List<GunSpec> guns;
-    public GunSpec currentGun;
+    public GunSO gun;
     bool isReloading;
-    public ShootingController shootingController;
-    public AudioSource au;
-        private void Start()
+    public  int magAmmo;
+    public int totalAmmo;
+    public float currentFireTime;
+    internal FiringMode firingMode;
+
+    private void Awake()
     {
-        SwitchGun(guns[0]);
+        firingMode = gun.firingMode[0];
+        magAmmo = gun.magSize;
+        totalAmmo = gun.maxAmmo;
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            SwitchGun(guns[0]);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            SwitchGun(guns[1]);
-        }
-        if (currentGun == null) return;
+        currentFireTime -= Time.deltaTime;
+        if (gun == null) return;
         if (isReloading) return;
-        if(currentGun.ammoInMag<currentGun.magSize && Input.GetKeyDown(KeyCode.R))
+        if (CanReload()&& Input.GetKeyDown(KeyCode.R))
         {
             isReloading = true;
-            Invoke(nameof(Reload), currentGun.reloadTime);
+            Invoke(nameof(Reload), gun.reloadTime);
             return;
         }
-        currentGun.currentFireTime -= Time.deltaTime;
-        if (currentGun.isAutomatic)
+        currentFireTime -= Time.deltaTime;
+        if (firingMode == FiringMode.automatic)
         {
             if (Input.GetKey(KeyCode.Mouse0))
             {
@@ -46,56 +41,39 @@ public class Gun : MonoBehaviour
         }
 
     }
-    void SwitchGun(GunSpec gun)
+    public bool CanFire()
     {
-        currentGun = gun;
+        return currentFireTime <=0 && magAmmo > 0 && !isReloading ;
     }
-    void Fire()
+    public void Fire()
     {
-        if (currentGun.currentFireTime > 0) return;// check for firerate
-        currentGun.currentFireTime = currentGun.firerate;// set firerate time
-        currentGun.ammoInMag -= 1;// decreasing 1 bullet from mag
-        shootingController.GenerateBullet();
-        au.PlayOneShot(currentGun.fireSoundClip); // playing sound of fire
-        if(currentGun.ammoInMag <= 0) // reload if bullets are zero in mag
+        if (!CanFire()) return;
+        currentFireTime = gun.firerate;// set firerate time
+        magAmmo-= 1;// decreasing 1 bullet from mag
+        if (magAmmo<= 0 && totalAmmo>0) // reload if bullets are zero in mag
         {
-            //Reload();
-            //Invoke("Reload",currentGun.reloadTime);
             isReloading = true;
-            Invoke(nameof(Reload),currentGun.reloadTime);
+            Invoke(nameof(Reload), gun.reloadTime);
         }
     }
-
+    public bool CanReload()
+    {
+        return magAmmo < gun.magSize && totalAmmo > 0;
+    }
     private void Reload()
     {
-        currentGun.ammoInMag = currentGun.magSize;
+        var diff = gun.magSize - magAmmo;
+        var toAdd = gun.magSize - diff;
+        if (totalAmmo >= gun.magSize)
+        {
+            magAmmo += toAdd;
+            totalAmmo -= toAdd;
+        }
+        else if(totalAmmo< toAdd)
+        {
+            magAmmo += totalAmmo;
+            totalAmmo = 0;
+        }
         isReloading = false;
     }
-}
-// Car is a class
-// class = blueprint/map/mold
-[System.Serializable]
-public class GunSpec
-{
-    public string name;
-    public int magSize;
-    public int ammoInMag;
-    public float currentFireTime;
-    public float firerate;
-    public float range;
-    public float weight;
-    public float reloadTime;
-    public bool isAutomatic;
-    public GunType gunType;
-    public Scope maxScopeAllowed;
-    public Scope scope;
-    public AudioClip fireSoundClip;
-}
-public enum Scope
-{
-    none,holographic,redDot,oneX,twoX,threeX,fourX,sixX,eightX
-}
-public enum GunType
-{
-    Pistol, Rifle, Sniper, Shotgun, Dmr, Machinegun, Smg
 }

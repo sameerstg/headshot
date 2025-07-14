@@ -1,42 +1,47 @@
 using Photon.Pun;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
     InputActionMain control;
     PhotonView pv;
     private Camera mainCamera;
+    [SerializeField] float walkSpeed = 2,runSpeed = 3;
 
+    public List<Gun> gunsCarrying;
+    public Gun currentGun;
     public GameObject bullet;
-    float time;
     private void Awake()
     {
         pv = GetComponent<PhotonView>();
+        currentGun = gunsCarrying[^1];
         if (!pv.IsMine) return;
         control = new InputActionMain();
         control.Enable();
         mainCamera = Camera.main; // Cache the main camera
-        control.MainActionMap.Shoot.performed += Shoot;
+        control.MainActionMap.Shoot.performed +=x=> Shoot();
     }
 
-    private void Shoot(InputAction.CallbackContext context)
+    private void Shoot()
     {
-        if (time < .5f) return;
+        if (!currentGun.CanFire()) return;
+        currentGun.Fire();
         var b = PhotonNetwork.Instantiate("Bullet", transform.position + transform.forward + Vector3.up * .5f, transform.rotation);
-        time = 0;
-
     }
 
     private void Update()
     {
         if (!pv.IsMine) return;
-
-        time += Time.deltaTime;
+        if (currentGun.CanFire() && control.MainActionMap.Shoot.inProgress && currentGun.firingMode == FiringMode.automatic)
+        {
+            currentGun.Fire();
+            Shoot();
+        }
         // Handle movement
         var movement = control.MainActionMap.Movement.ReadValue<Vector2>();
-        transform.position += new Vector3(movement.x, 0, movement.y) * Time.deltaTime;
+        transform.position += new Vector3(movement.x, 0, movement.y) * Time.deltaTime*runSpeed;
         mainCamera.transform.position = transform.position + Vector3.up * 15;
 
         // Handle rotation based on mouse position
@@ -68,15 +73,11 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (!pv.IsMine) return;
-        if (other.CompareTag("Bullet") )
+        if (other.CompareTag("Bullet"))
         {
             var pv = other.GetComponent<PhotonView>();
             if (pv.IsMine) return;
-            PhotonNetwork.Destroy(pv);
-            PhotonNetwork.DestroyAll(true);
-
-            PhotonNetwork.Disconnect();
-            SceneManager.LoadScene(0);
+            transform.position = new Vector3(Random.Range(-10,10),transform.position.y,Random.Range(-10,10));
         }
         
     }

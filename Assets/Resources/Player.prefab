@@ -38,6 +38,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 590123344595332068}
   - {fileID: 6552186906542386654}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -150,6 +151,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b443d7a4619c696409f10a7f013c143a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  walkSpeed: 2
+  runSpeed: 3
+  gunsCarrying:
+  - {fileID: 6170176564234956217}
+  currentGun: {fileID: 0}
   bullet: {fileID: 7780085334456030659, guid: f28788880b8502b49b056a5024e55b6a, type: 3}
 --- !u!114 &436087515204589637
 MonoBehaviour:
@@ -222,7 +228,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 126
+  m_Constraints: 116
   m_CollisionDetection: 0
 --- !u!114 &-3220607284583157722
 MonoBehaviour:
@@ -345,3 +351,76 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1001 &131759925518926180
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2450214623985554928}
+    m_Modifications:
+    - target: {fileID: 712854046267222656, guid: f46a82d544393544da7b42501e861442, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 712854046267222656, guid: f46a82d544393544da7b42501e861442, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 712854046267222656, guid: f46a82d544393544da7b42501e861442, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 712854046267222656, guid: f46a82d544393544da7b42501e861442, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 712854046267222656, guid: f46a82d544393544da7b42501e861442, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 712854046267222656, guid: f46a82d544393544da7b42501e861442, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 712854046267222656, guid: f46a82d544393544da7b42501e861442, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 712854046267222656, guid: f46a82d544393544da7b42501e861442, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 712854046267222656, guid: f46a82d544393544da7b42501e861442, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 712854046267222656, guid: f46a82d544393544da7b42501e861442, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5183637417498987703, guid: f46a82d544393544da7b42501e861442, type: 3}
+      propertyPath: m_Name
+      value: AK-47
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f46a82d544393544da7b42501e861442, type: 3}
+--- !u!4 &590123344595332068 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 712854046267222656, guid: f46a82d544393544da7b42501e861442, type: 3}
+  m_PrefabInstance: {fileID: 131759925518926180}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6170176564234956217 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6085704572378688733, guid: f46a82d544393544da7b42501e861442, type: 3}
+  m_PrefabInstance: {fileID: 131759925518926180}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdd939aefc2cb95458f1034351ffd102, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
