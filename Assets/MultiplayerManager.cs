@@ -11,6 +11,12 @@ public class MultiplayerManager : MonoBehaviourPunCallbacks
     
     void Start()
     {
+        inputField.transform.localScale = Vector3.zero;
+        createButton.transform.localScale = Vector3.zero;
+        joinButton.transform.localScale = Vector3.zero;
+        LeanTween.scale(inputField.gameObject, Vector3.one, .5f).setEaseInExpo();
+        LeanTween.scale(createButton.gameObject, Vector3.one, .5f).setEaseInExpo();
+        LeanTween.scale(joinButton.gameObject, Vector3.one, .5f).setEaseInExpo();
         PhotonNetwork.ConnectUsingSettings();
         joinButton.onClick.AddListener(() =>
         {
